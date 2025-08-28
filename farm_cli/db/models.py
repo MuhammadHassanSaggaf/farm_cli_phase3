@@ -165,3 +165,122 @@ class AnimalFeed(Base):
     @classmethod
     def get_for_feed(cls, session, feed_id):
         return session.query(cls).filter_by(feed_id=feed_id).all()
+
+class Inventory(Base):
+    __tablename__ = 'inventory'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String, unique=True, nullable=False)
+    category = Column(String, nullable=False)  # e.g. 'medicine', 'tool', 'supply'
+    quantity = Column(Integer, default=0)
+
+    @classmethod
+    def create(cls, session, name, category, quantity=0):
+        if not name or not name.strip():
+            raise ValueError("Inventory name required")
+        if not category or not category.strip():
+            raise ValueError("Category required")
+        if quantity < 0:
+            raise ValueError("Quantity cannot be negative")
+
+        item = cls(name=name.strip(), category=category.strip(), quantity=quantity)
+        session.add(item)
+        session.flush()
+        return item
+
+    @classmethod
+    def get_all(cls, session):
+        return session.query(cls).all()
+
+    @classmethod
+    def find_by_name(cls, session, name):
+        return session.query(cls).filter_by(name=name).first()
+
+    @classmethod
+    def delete_by_id(cls, session, id_):
+        obj = session.get(cls, id_)
+        if not obj:
+            return False
+        session.delete(obj)
+        session.flush()
+        return True
+
+
+class Personnel(Base):
+    __tablename__ = 'personnel'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    role = Column(String, nullable=False)
+    salary = Column(Float, default=0.0)
+
+    @classmethod
+    def create(cls, session, name, role, salary=0.0):
+        if not name or not name.strip():
+            raise ValueError("Name required")
+        if not role or not role.strip():
+            raise ValueError("Role required")
+        if salary < 0:
+            raise ValueError("Salary cannot be negative")
+
+        person = cls(name=name.strip(), role=role.strip(), salary=float(salary))
+        session.add(person)
+        session.flush()
+        return person
+
+    @classmethod
+    def get_all(cls, session):
+        return session.query(cls).all()
+
+    @classmethod
+    def find_by_id(cls, session, id_):
+        return session.query(cls).filter_by(id=id_).first()
+
+    @classmethod
+    def delete_by_id(cls, session, id_):
+        obj = cls.find_by_id(session, id_)
+        if not obj:
+            return False
+        session.delete(obj)
+        session.flush()
+        return True
+
+
+class Sale(Base):
+    __tablename__ = 'sales'
+
+    id = Column(Integer, primary_key=True)
+    animal_id = Column(Integer, ForeignKey('animals.id'), nullable=False)
+    price = Column(Float, nullable=False)
+    date = Column(Date, default=date.today)
+
+    animal = relationship('Animal', back_populates='sales')
+
+    @classmethod
+    def create(cls, session, animal, price, date_=None):
+        if not animal:
+            raise ValueError("Animal required")
+        if price <= 0:
+            raise ValueError("Price must be positive")
+
+        sale = cls(animal=animal, price=float(price), date=date_ or date.today())
+        session.add(sale)
+        session.flush()
+        return sale
+
+    @classmethod
+    def get_all(cls, session):
+        return session.query(cls).all()
+
+    @classmethod
+    def find_by_id(cls, session, id_):
+        return session.query(cls).filter_by(id=id_).first()
+
+    @classmethod
+    def delete_by_id(cls, session, id_):
+        obj = cls.find_by_id(session, id_)
+        if not obj:
+            return False
+        session.delete(obj)
+        session.flush()
+        return True
