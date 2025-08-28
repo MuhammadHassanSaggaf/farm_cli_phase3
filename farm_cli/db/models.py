@@ -23,7 +23,7 @@ class Animal(Base):
 
     # one-to-many: Animal -> AnimalFeed
     feed_events = relationship('AnimalFeed', back_populates='animal', cascade='all, delete-orphan')
-
+    sales = relationship("Sale", back_populates="animal", cascade="all, delete-orphan")
     # property constraints
     @property
     def age(self):
@@ -170,20 +170,19 @@ class Inventory(Base):
     __tablename__ = 'inventory'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String, unique=True, nullable=False)
-    category = Column(String, nullable=False)  # e.g. 'medicine', 'tool', 'supply'
-    quantity = Column(Integer, default=0)
+    name = Column(String, nullable=False)
+    category = Column(String, nullable=False)
+    quantity = Column(Float, default=0.0)
+    unit = Column(String, default="pcs")
 
     @classmethod
-    def create(cls, session, name, category, quantity=0):
-        if not name or not name.strip():
-            raise ValueError("Inventory name required")
-        if not category or not category.strip():
-            raise ValueError("Category required")
-        if quantity < 0:
-            raise ValueError("Quantity cannot be negative")
-
-        item = cls(name=name.strip(), category=category.strip(), quantity=quantity)
+    def create(cls, session, name, category, quantity=0.0, unit="pcs"):
+        item = cls(
+            name=name.strip(),
+            category=category.strip(),
+            quantity=float(quantity),
+            unit=unit.strip()
+        )
         session.add(item)
         session.flush()
         return item
@@ -193,17 +192,18 @@ class Inventory(Base):
         return session.query(cls).all()
 
     @classmethod
-    def find_by_name(cls, session, name):
-        return session.query(cls).filter_by(name=name).first()
+    def find_by_id(cls, session, id_):
+        return session.query(cls).filter_by(id=id_).first()
 
     @classmethod
     def delete_by_id(cls, session, id_):
-        obj = session.get(cls, id_)
+        obj = cls.find_by_id(session, id_)
         if not obj:
             return False
         session.delete(obj)
         session.flush()
         return True
+
 
 
 class Personnel(Base):

@@ -1,8 +1,11 @@
 from datetime import date
 from farm_cli.db.session import SessionLocal
 from farm_cli.db.models import Animal
+from farm_cli.banners import animal_banner
 
 def animals_menu():
+    animal_banner()
+    print("Welcome to the Animals Menu 🐄")
     session = SessionLocal()
 
     while True:

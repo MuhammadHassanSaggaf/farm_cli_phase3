@@ -1,7 +1,10 @@
 from farm_cli.db.session import SessionLocal
 from farm_cli.db.models import Feed
+from farm_cli.banners import feeds_banner
 
 def feeds_menu():
+    feeds_banner()
+    print("Welcome to the Feeds Menu 🌾")
     session = SessionLocal()
 
     while True:

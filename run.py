@@ -1,47 +1,50 @@
+#!/usr/bin/env python3
+
+from colorama import Fore, Style, init
+
+from farm_cli.banners import print_banner, welcome_farmer
 from farm_cli.commands.animals_menu import animals_menu
 from farm_cli.commands.feeds_menu import feeds_menu
-from farm_cli.db.session import init_db
+from farm_cli.commands.inventory_menu import inventory_menu
+from farm_cli.commands.sales_menu import sales_menu
+from farm_cli.commands.personnel_menu import personnel_menu
 
-MENU = {
-    "1": ("Manage Animals", animals_menu),
-    "2": ("Manage Feeds", feeds_menu),
-    "0": ("Exit", None),
-}
+init(autoreset=True)
 
-def welcome():
-    print("🌱 Welcome to Farm CLI 🌱")
-    name = input("Please enter your name, Farmer: ").strip()
-    if not name:
-        name = "Farmer"
-    print(f"\nHello, {name}! 👩‍🌾👨‍🌾")
-    print("Farm CLI helps you manage your farm by keeping track of animals, feeds, and more.")
-    print("Use the menus to add, update, and view your farm records.\n")
-    return name
 
-def main():
-    # Ensure database and tables exist
-    init_db()
-
-    farmer = welcome()
+def main_menu():
+    print_banner()
+    farmer_name = input(f"{Fore.CYAN}{Style.BRIGHT}👩‍🌾 Please enter your name: {Style.RESET_ALL}")
+    welcome_farmer(farmer_name)
 
     while True:
-        print("\n=== Main Menu ===")
-        for k, (label, _) in MENU.items():
-            print(f"{k}. {label}")
+        print(f"""
+{Fore.GREEN}{Style.BRIGHT}Main Menu 🌱
+1. Animals 🐄
+2. Feeds 🌾
+3. Inventory 🛠️
+4. Sales 💰
+5. Personnel 👥
+0. Exit 🚪
+""")
+        choice = input(f"{Fore.YELLOW}Enter your choice: {Style.RESET_ALL}")
 
-        choice = input("Choose an option: ").strip()
-
-        if choice == "0":
-            print(f"Goodbye, {farmer}! 👋")
+        if choice == "1":
+            animals_menu()
+        elif choice == "2":
+            feeds_menu()
+        elif choice == "3":
+            inventory_menu()
+        elif choice == "4":
+            sales_menu()
+        elif choice == "5":
+            personnel_menu()
+        elif choice == "0":
+            print(f"{Fore.MAGENTA}Goodbye, happy farming! 🌻{Style.RESET_ALL}")
             break
+        else:
+            print(f"{Fore.RED}Invalid choice, please try again!{Style.RESET_ALL}")
 
-        entry = MENU.get(choice)
-        if not entry:
-            print("❌ Invalid choice — try again.")
-            continue
-
-        _, func = entry
-        func()
 
 if __name__ == "__main__":
-    main()
+    main_menu()
