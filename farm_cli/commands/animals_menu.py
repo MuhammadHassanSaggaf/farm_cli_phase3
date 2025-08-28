@@ -1,6 +1,6 @@
 from datetime import date
 from farm_cli.db.session import SessionLocal
-from farm_cli.models import Animal
+from farm_cli.db.models import Animal
 
 def animals_menu():
     session = SessionLocal()
