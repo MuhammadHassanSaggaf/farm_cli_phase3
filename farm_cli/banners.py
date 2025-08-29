@@ -8,17 +8,22 @@ def reset():
 
 # 🌟 Main Banner
 def print_banner():
-    banner = f"""
-{Fore.GREEN}{Style.BRIGHT}
-    █████╗   ██████╗ ██████╗ ██╗███╗   ███╗ █████╗ ████████╗███████╗
-   ██╔══██╗ ██╔════╝██╔═══██╗██║████╗ ████║██╔══██╗╚══██╔══╝██╔════╝
-   ███████║ ██║     ██║   ██║██║██╔████╔██║███████║   ██║   █████╗  
-   ██╔══██║ ██║     ██║   ██║██║██║╚██╔╝██║██╔══██║   ██║   ██╔══╝  
-   ██║  ██║ ╚██████╗╚██████╔╝██║██║ ╚═╝ ██║██║  ██║   ██║   ███████╗
-   ╚═╝  ╚═╝  ╚═════╝ ╚═════╝ ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝   ╚══════╝
-                                                                    
-{Fore.YELLOW}{Style.BRIGHT}🌱 Your friendly farm management assistant 🌱
     """
+    Print a big 'AGRIMATE' banner.
+    If pyfiglet is installed it will be used for a nicer ASCII font.
+    Fallback prints a simple colored header.
+    """
+    try:
+        import pyfiglet
+        ascii_art = pyfiglet.figlet_format("AGRIMATE", font="slant")
+        banner = f"\n{Fore.GREEN}{Style.BRIGHT}{ascii_art}\n{Fore.YELLOW}{Style.BRIGHT}🌱  AGRIMATE — your friendly farm management assistant 🌱\n"
+    except Exception:
+        # fallback (no extra dependency required)
+        banner = f"""
+{Fore.GREEN}{Style.BRIGHT}
+    A G R I M A T E
+{Fore.YELLOW}{Style.BRIGHT}    🌱 AGRIMATE — your friendly farm management assistant 🌱
+"""
     print(banner)
 
 def welcome_farmer(name: str):
@@ -85,3 +90,10 @@ def personnel_banner():
     |____|
    Farmhouse Office
     """ + reset())
+
+def feed_events_banner():
+    print(f"""
+{Fore.GREEN}{Style.BRIGHT}====================================
+🥣        Feed Events Menu        🥣
+====================================
+""")

@@ -8,6 +8,7 @@ from farm_cli.commands.feeds_menu import feeds_menu
 from farm_cli.commands.inventory_menu import inventory_menu
 from farm_cli.commands.sales_menu import sales_menu
 from farm_cli.commands.personnel_menu import personnel_menu
+from farm_cli.commands.feed_events_menu import feed_events_menu  # <-- new
 
 init(autoreset=True)
 
@@ -22,9 +23,10 @@ def main_menu():
 {Fore.GREEN}{Style.BRIGHT}Main Menu 🌱
 1. Animals 🐄
 2. Feeds 🌾
-3. Inventory 🛠️
-4. Sales 💰
-5. Personnel 👥
+3. Feed Events 🥣 
+4. Inventory 🛠️
+5. Sales 💰
+6. Personnel 👥
 0. Exit 🚪
 """)
         choice = input(f"{Fore.YELLOW}Enter your choice: {Style.RESET_ALL}")
@@ -34,10 +36,12 @@ def main_menu():
         elif choice == "2":
             feeds_menu()
         elif choice == "3":
-            inventory_menu()
+            feed_events_menu() 
         elif choice == "4":
-            sales_menu()
+            inventory_menu()
         elif choice == "5":
+            sales_menu()
+        elif choice == "6":
             personnel_menu()
         elif choice == "0":
             print(f"{Fore.MAGENTA}Goodbye, happy farming! 🌻{Style.RESET_ALL}")

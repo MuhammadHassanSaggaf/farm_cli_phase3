@@ -25,6 +25,7 @@ class Animal(Base):
     feed_events = relationship('AnimalFeed', back_populates='animal', cascade='all, delete-orphan')
     sales = relationship("Sale", back_populates="animal", cascade="all, delete-orphan")
     # property constraints
+    
     @property
     def age(self):
         if not self.dob:
@@ -261,6 +262,7 @@ class Sale(Base):
 
     # relationship back to Animal
     animal = relationship('Animal', back_populates='sales', foreign_keys=[animal_id])
+
 
     @classmethod
     def create(cls, session, product, quantity, unit_price, animal=None, date_=None):
