@@ -196,6 +196,7 @@ agrimate/ or farm_cli_phase3/
 ---
 
 ## 📞 Contact / Author
+### Muhammad Saggaf
 
 If you would like me to add an author block, contact info, or a project website, tell me what to include and I will update the README.
 

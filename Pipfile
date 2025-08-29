@@ -8,6 +8,10 @@ SQLAlchemy = "*"
 python-dotenv = "*"
 tabulate = "*"
 alembic = "*"
+colorama = "*"
+faker = "*"
+pyfiglet = "*"
+dotenv = "*"
 
 [dev-packages]
 
