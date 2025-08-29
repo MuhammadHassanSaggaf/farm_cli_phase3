@@ -250,23 +250,41 @@ class Sale(Base):
     __tablename__ = 'sales'
 
     id = Column(Integer, primary_key=True)
-    animal_id = Column(Integer, ForeignKey('animals.id'), nullable=False)
-    price = Column(Float, nullable=False)
+    product = Column(String, nullable=False)
+    quantity = Column(Float, nullable=False)
+    unit_price = Column(Float, nullable=False)
+    total_amount = Column(Float, nullable=False)
     date = Column(Date, default=date.today)
 
-    animal = relationship('Animal', back_populates='sales')
+    # link to Animal (optional: allow NULL if sale is not an animal sale)
+    animal_id = Column(Integer, ForeignKey('animals.id'), nullable=True)
+
+    # relationship back to Animal
+    animal = relationship('Animal', back_populates='sales', foreign_keys=[animal_id])
 
     @classmethod
-    def create(cls, session, animal, price, date_=None):
-        if not animal:
-            raise ValueError("Animal required")
-        if price <= 0:
-            raise ValueError("Price must be positive")
+    def create(cls, session, product, quantity, unit_price, animal=None, date_=None):
+        if not product or not product.strip():
+            raise ValueError("Product required")
+        if float(quantity) <= 0:
+            raise ValueError("Quantity must be positive")
+        if float(unit_price) <= 0:
+            raise ValueError("Unit price must be positive")
 
-        sale = cls(animal=animal, price=float(price), date=date_ or date.today())
+        total = float(quantity) * float(unit_price)
+        sale = cls(
+            product=product.strip(),
+            quantity=float(quantity),
+            unit_price=float(unit_price),
+            total_amount=total,
+            date=date_ or date.today(),
+            animal=animal
+        )
         session.add(sale)
         session.flush()
         return sale
+
+
 
     @classmethod
     def get_all(cls, session):

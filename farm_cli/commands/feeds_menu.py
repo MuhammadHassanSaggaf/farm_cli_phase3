@@ -2,6 +2,11 @@ from farm_cli.db.session import SessionLocal
 from farm_cli.db.models import Feed
 from farm_cli.banners import feeds_banner
 
+def format_feed(f: Feed) -> str:
+    if not f:
+        return "❌ Not found."
+    return f"ID: {f.id} | {f.name} | Unit: {f.unit} | Cost/unit: {f.cost_per_unit} | Stock: {f.stock_quantity}"
+
 def feeds_menu():
     feeds_banner()
     print("Welcome to the Feeds Menu 🌾")
@@ -20,13 +25,13 @@ def feeds_menu():
 
         if choice == "1":
             try:
-                name = input("Enter feed name: ")
-                unit = input("Enter unit (default=kg): ") or "kg"
-                cost = float(input("Enter cost per unit: ") or 0)
-                stock = float(input("Enter stock quantity: ") or 0)
+                name = input("Enter feed name: ").strip()
+                unit = input("Enter unit (default=kg): ").strip() or "kg"
+                cost = float(input("Enter cost per unit (default=0): ") or 0)
+                stock = float(input("Enter stock quantity (default=0): ") or 0)
                 feed = Feed.create(session, name, unit, cost, stock)
                 session.commit()
-                print(f"✅ Feed added: {feed.id} - {feed.name}")
+                print(f"✅ Feed added: {format_feed(feed)}")
             except Exception as e:
                 session.rollback()
                 print("❌ Error:", e)
@@ -35,22 +40,24 @@ def feeds_menu():
             feeds = Feed.get_all(session)
             if not feeds:
                 print("No feeds found.")
-            for f in feeds:
-                print(f"[{f.id}] {f.name} | Stock: {f.stock_quantity}{f.unit}")
+            else:
+                for f in feeds:
+                    print(format_feed(f))
 
         elif choice == "3":
-            id_ = input("Enter ID: ")
-            feed = Feed.find_by_id(session, id_)
-            print(feed if feed else "❌ Not found")
+            id_ = input("Enter ID: ").strip()
+            feed = Feed.find_by_id(session, int(id_))
+            print(format_feed(feed))
 
         elif choice == "4":
-            name = input("Enter name: ")
+            name = input("Enter name: ").strip()
             feed = Feed.find_by_name(session, name)
-            print(feed if feed else "❌ Not found")
+            print(format_feed(feed))
 
         elif choice == "5":
-            id_ = input("Enter ID to delete: ")
-            if Feed.delete_by_id(session, id_):
+            id_ = input("Enter ID to delete: ").strip()
+            deleted = Feed.delete_by_id(session, int(id_))
+            if deleted:
                 session.commit()
                 print("✅ Deleted")
             else:
